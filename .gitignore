@@ -1,0 +1,15 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+.models/__pycache__
+
+# IDE settings
+.cursor/
+.vscode/
+.idea/
+
+# note files
+Experiment_Design.md
+
+# macOS hidden files
+.DS_Store
