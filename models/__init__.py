@@ -1,6 +1,6 @@
 """Models package with unified factory function."""
 
-from .model_lipschitz_bounds import (
+from .dot_product_attention_model import (
     LipschitzBoundedTransformer,
     create_model as create_lipschitz_bounded_model,
     MODEL_CONFIG as LIPSCHITZ_BOUNDED_CONFIG,

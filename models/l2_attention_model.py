@@ -138,7 +138,6 @@ class L2MultiHeadAttention(nn.Module):
             raise ValueError(f"Weight reshape dimension mismatch: expected {expected_elements} elements, got {actual_elements}. d_model={self.d_model}, num_heads={self.num_heads}, d_k={self.d_k}")
         
         # Reshape to (num_heads, d_k, d_model)
-        # Note: This assumes the weight matrix can be interpreted as per-head weights
         w_q_params = w_k_contiguous.view(self.num_heads, self.d_k, self.d_model)
         w_v_params = w_v_contiguous.view(self.num_heads, self.d_k, self.d_model)
 
@@ -261,6 +260,39 @@ class L2Transformer(nn.Module):
         logits = self.logit_layer(x)
 
         return logits
+
+    def compute_spectral_norm(weight: torch.Tensor) -> float:
+        """
+        Compute the l2 operator norm of a weight matrix.
+
+        Args:
+            weight: Weight matrix of shape [d_out, d_in]
+        
+        Returns:
+            The spectral norm of weight matrix
+        """
+        spectral_norm = torch.linalg.matrix_norm(weight, ord=2).item()
+        return spectral_norm
+
+def compute_l2_lipschitz_certificate(model: L2Transformer) -> dict:
+    r"""
+    Compute the Lipschitz upper bound with regards to the spectral norm.
+    
+    As L2 Self-Attention is Lipschitz continuous it is sufficient to upper bound the 
+    Lipschitz constant of every layer and multiply the layerwise constants.
+    
+    Args:
+        model: L2Transformer instance
+    
+    Returns:
+        Dictionary containing:
+        - 'lipschitz_bound': The global Lipschitz upper bound
+        - 'activation_bounds': List of activation norm bounds at each layer
+        - 'block_lipschitz_bounds': Lipschitz bounds for each block
+        - 'layer_lipschitz_bounds': Cumulative Lipschitz bound after each layer
+    """
+    pass
+
 
 
 # Model hyperparameters (default config)
